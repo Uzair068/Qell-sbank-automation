@@ -8,6 +8,10 @@ setup('authenticate as bank manager', async ({ page }) => {
   await page.goto('https://demo.guru99.com/V4/index.php');
   await page.waitForLoadState('domcontentloaded');
 
+  // Debug logs
+  console.log('MANAGER_ID:', process.env.MANAGER_ID);
+  console.log('URL:', page.url());
+
   // Fill login
   await page.locator('[name="uid"]').fill(process.env.MANAGER_ID!);
   await page.locator('[name="password"]').fill(process.env.MANAGER_PASSWORD!);
