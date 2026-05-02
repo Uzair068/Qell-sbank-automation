@@ -15,13 +15,13 @@ export default defineConfig({
     ['allure-playwright'],
   ],
 
- use: {
-  baseURL: 'https://demo.guru99.com/V4',
-  headless: false,
-  launchOptions: {
-      slowMo: 600,          // ← Slows down Playwright operations by 100ms (great for learning)
-    },
+use: {
+  baseURL: process.env.BASE_URL || 'https://demo.guru99.com/V4',
+  headless: process.env.CI ? true : false, // ← hidden in CI
   ignoreHTTPSErrors: true,
+  launchOptions: {
+      slowMo: 400,          // ← Slows down Playwright operations by 100ms (great for learning)
+    },
   screenshot: 'only-on-failure',
   video: 'retain-on-failure',
   trace: 'on-first-retry',
