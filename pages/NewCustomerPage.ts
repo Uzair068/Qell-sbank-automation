@@ -17,21 +17,25 @@ export class NewCustomerPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.nameInput = page.locator('input[name="name"]');
+    this.nameInput = page.locator('[name="name"]');
     this.genderMale = page.locator('input[value="m"]');
-    this.dobInput = page.locator('input[name="dob"]');
-    this.addressInput = page.locator('input[name="addr"]');
-    this.cityInput = page.locator('input[name="city"]');
-    this.stateInput = page.locator('input[name="state"]');
-    this.pinInput = page.locator('input[name="pinno"]');
-    this.mobileInput = page.locator('input[name="telephoneno"]');
-    this.emailInput = page.locator('input[name="emailid"]');
-    this.passwordInput = page.locator('input[name="password"]');
-    this.submitButton = page.locator('input[name="sub"]');
-    this.resetButton = page.locator('input[name="res"]');
+    this.dobInput = page.locator('[name="dob"]');
+    this.addressInput = page.locator('[name="addr"]');
+    this.cityInput = page.locator('[name="city"]');
+    this.stateInput = page.locator('[name="state"]');
+    this.pinInput = page.locator('[name="pinno"]');
+    this.mobileInput = page.locator('[name="telephoneno"]');
+    this.emailInput = page.locator('[name="emailid"]');
+    this.passwordInput = page.locator('[name="password"]');
+    this.submitButton = page.locator('[name="sub"]');
+    this.resetButton = page.locator('[name="res"]');
   }
 
-  async fillCustomerDetails(customer: {
+  async goto() {
+    await this.page.goto('https://demo.guru99.com/V4/manager/addcustomerpage.php');
+  }
+
+  async createCustomer(customer: {
     name: string;
     dob: string;
     address: string;
@@ -52,17 +56,14 @@ export class NewCustomerPage {
     await this.mobileInput.fill(customer.mobile);
     await this.emailInput.fill(customer.email);
     await this.passwordInput.fill(customer.password);
-  }
-
-  async submit() {
     await this.submitButton.click();
   }
 
-  // Returns customer ID from success page
   async getCustomerId(): Promise<string> {
-    const row = this.page.locator('td[class="heading3"]');
-    await expect(row).toContainText('Customer Registered Successfully!!!');
-    const idCell = this.page.locator('table td').filter({ hasText: 'Customer ID' }).locator('..').locator('td').last();
-    return (await idCell.textContent()) || '';
+    await expect(this.page.getByText('Customer Registered Successfully!!!')).toBeVisible();
+    const rows = this.page.locator('table tr');
+    const idRow = rows.filter({ hasText: 'Customer ID' });
+    const id = await idRow.locator('td').last().textContent();
+    return id?.trim() || '';
   }
 }
