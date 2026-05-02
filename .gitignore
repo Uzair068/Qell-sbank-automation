@@ -1,8 +1,8 @@
-echo node_modules/ > .gitignore
-echo playwright-report/ >> .gitignore
-echo test-results/ >> .gitignore
-echo playwright/.auth/ >> .gitignore
-echo .env >> .gitignore
-echo *.zip >> .gitignore
-echo allure-results/ >> .gitignore
-echo allure-report/ >> .gitignore
+node_modules/
+playwright-report/
+test-results/
+playwright/.auth/
+allure-results/
+allure-report/
+.env
+*.zip
