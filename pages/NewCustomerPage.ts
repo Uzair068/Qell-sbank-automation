@@ -49,6 +49,7 @@ export class NewCustomerPage {
     await this.nameInput.fill(customer.name);
     await this.genderMale.check();
     await this.dobInput.fill(customer.dob);
+    await this.page.keyboard.press('Tab');
     await this.addressInput.fill(customer.address);
     await this.cityInput.fill(customer.city);
     await this.stateInput.fill(customer.state);
@@ -59,11 +60,16 @@ export class NewCustomerPage {
     await this.submitButton.click();
   }
 
-  async getCustomerId(): Promise<string> {
-    await expect(this.page.getByText('Customer Registered Successfully!!!')).toBeVisible();
-    const rows = this.page.locator('table tr');
-    const idRow = rows.filter({ hasText: 'Customer ID' });
-    const id = await idRow.locator('td').last().textContent();
-    return id?.trim() || '';
-  }
+ async getCustomerId(): Promise<string> {
+  // Wait for success message
+  await expect(this.page.getByText('Customer Registered Successfully!!!'))
+    .toBeVisible({ timeout: 15000 });
+
+  // Get Customer ID from the specific row
+  // The table shows: | Customer ID | | 12345 |
+  const idLocator = this.page.locator('td').filter({ hasText: /^\d+$/ }).first();
+  const id = await idLocator.textContent();
+  console.log('Raw ID found:', id);
+  return id?.trim() || '';
+}
 }

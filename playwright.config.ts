@@ -18,6 +18,9 @@ export default defineConfig({
  use: {
   baseURL: 'https://demo.guru99.com/V4',
   headless: false,
+  launchOptions: {
+      slowMo: 600,          // ← Slows down Playwright operations by 100ms (great for learning)
+    },
   ignoreHTTPSErrors: true,
   screenshot: 'only-on-failure',
   video: 'retain-on-failure',

@@ -21,16 +21,30 @@ export class NewAccountPage {
 
   async createAccount(customerId: string, type: 'Savings' | 'Current', deposit: string) {
     await this.customerIdInput.fill(customerId);
+    await this.customerIdInput.press('Tab');
     await this.accountTypeSelect.selectOption(type);
     await this.initialDepositInput.fill(deposit);
     await this.submitButton.click();
+    // Wait for success page to load
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async getAccountId(): Promise<string> {
-    await expect(this.page.getByText('Account Generated Successfully!!!')).toBeVisible();
-    const rows = this.page.locator('table tr');
-    const idRow = rows.filter({ hasText: 'Account ID' });
-    const id = await idRow.locator('td').last().textContent();
-    return id?.trim() || '';
+  await expect(this.page.getByText('Account Generated Successfully!!!'))
+    .toBeVisible({ timeout: 15000 });
+
+  // Get all cells
+  const cells = await this.page.locator('table tr td').all();
+  
+  for (let i = 0; i < cells.length; i++) {
+    const text = await cells[i].textContent();
+    if (text?.trim() === 'Account ID') {
+      // Next cell has the actual ID
+      const id = await cells[i + 1].textContent();
+      console.log('Account ID found:', id?.trim());
+      return id?.trim() || '';
+    }
   }
+  return '';
+}
 }
