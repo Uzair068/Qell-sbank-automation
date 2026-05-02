@@ -1,0 +1,15 @@
+{
+  "validCustomer": {
+    "name": "Uzair Khan",
+    "dob": "01/01/1995",
+    "address": "123 MG Road",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "pin": "500001",
+    "mobile": "9876543210",
+    "email": "uzair.test@gmail.com",
+    "password": "Test@1234"
+  },
+  "transferAmount": "500",
+  "depositAmount": "10000"
+}
