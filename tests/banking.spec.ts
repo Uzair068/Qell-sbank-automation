@@ -27,10 +27,43 @@ test.describe.configure({ mode: 'serial' });
 
 test.describe('Guru99 Bank — Full Banking Flow 🏦', () => {
 
-    test.beforeAll(async () => {
+  // Runs once before all tests — clears state
+  test.beforeAll(async () => {
     if (fs.existsSync(stateFile)) {
       fs.unlinkSync(stateFile);
       console.log('🧹 State cleared — fresh run');
+    }
+  });
+
+  // Runs before EACH test — ensures logged in
+  test.beforeEach(async ({ page }) => {
+    const isLoggedIn = await page.getByText("Welcome To Manager's Page")
+      .isVisible({ timeout: 3000 }).catch(() => false);
+
+    if (!isLoggedIn) {
+      const currentUrl = page.url();
+      if (!currentUrl.includes('manager')) {
+        await page.goto('https://demo.guru99.com/V4/index.php');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(2000);
+
+        const uid = page.locator('[name="uid"]');
+        if (await uid.isVisible({ timeout: 5000 }).catch(() => false)) {
+          await uid.fill(process.env.MANAGER_ID || 'mngr660320');
+          await page.locator('[name="password"]')
+            .fill(process.env.MANAGER_PASSWORD || 'arybAtY');
+
+          const btn = page.locator('[name="btnLogin"]');
+          const btn2 = page.getByRole('button', { name: 'LOGIN' });
+
+          if (await btn.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await btn.click();
+          } else {
+            await btn2.click();
+          }
+          await page.waitForTimeout(3000);
+        }
+      }
     }
   });
 
